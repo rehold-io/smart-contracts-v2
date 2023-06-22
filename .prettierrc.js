@@ -1,0 +1,1 @@
+module.exports = require("@rehold-io/eslint-config/.prettierrc.js");
