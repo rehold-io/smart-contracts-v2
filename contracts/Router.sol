@@ -183,8 +183,24 @@ contract Router is MPCSignable, Pausable, IRouter {
     }
   }
 
-  function _getCreateHash(Tariff calldata tariff) internal pure returns (bytes32) {
-    return keccak256(abi.encode(tariff));
+  function _getCreateHash(Tariff calldata tariff) internal view returns (bytes32) {
+    return keccak256(
+      abi.encode(
+        block.chainid,
+        tariff.user,
+        tariff.baseToken,
+        tariff.quoteToken,
+        tariff.minBaseAmount,
+        tariff.maxBaseAmount,
+        tariff.minQuoteAmount,
+        tariff.maxQuoteAmount,
+        tariff.thresholdBaseAmount,
+        tariff.thresholdQuoteAmount,
+        tariff.stakingPeriod,
+        tariff.yield,
+        tariff.expireAt
+      )
+    );
   }
 
   function _getClaimHash(address user, address token, uint256 amount, bytes32 txHash) internal view returns (bytes32) {

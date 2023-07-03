@@ -667,6 +667,26 @@ describe("router", () => {
       await expect(tx).to.be.revertedWith("Router: Bad user");
     });
 
+    it("should not create w/ bad tariff chain id", async () => {
+      const state = await loadFixture(deploy);
+      const {router, user, mpc, usdt} = state;
+
+      const tariff = {...data.router.tariff(state), chainId: 1} as any;
+      const signature = await mpc.signMessage(getTariffHash(tariff));
+
+      const tx = router.connect(user).create(
+        tariff,
+        {
+          user: user.address,
+          token: usdt.address,
+          amount: 100 * 1e6,
+        },
+        signature,
+      );
+
+      await expect(tx).to.be.revertedWith("MPCSignable: Must be MPC");
+    });
+
     it("should not create w/ expired tariff", async () => {
       const state = await loadFixture(deploy);
       const {router, user, mpc, usdt} = state;
@@ -1461,6 +1481,36 @@ describe("router", () => {
       await expect(tx).to.be.revertedWith("Router: Bad user");
     });
 
+    it("should not create with permit w/ bad tariff chain id", async () => {
+      const state = await loadFixture(deploy);
+      const {router, vault, user, mpc, usdt} = state;
+
+      const now = await time.latest();
+      const deadline = now + 30 * 60;
+      const amount = (30_000 * 1e6).toString();
+      const permit = await getPermit(user, usdt, amount, vault.address, deadline);
+
+      const tariff = {
+        ...data.router.tariff(state),
+        chainId: 1,
+      } as any;
+
+      const signature = await mpc.signMessage(getTariffHash(tariff));
+
+      const tx = router.connect(user).createWithPermit(
+        tariff,
+        {
+          user: user.address,
+          token: usdt.address,
+          amount: 100 * 1e6,
+        },
+        signature,
+        permit,
+      );
+
+      await expect(tx).to.be.revertedWith("MPCSignable: Must be MPC");
+    });
+
     it("should not create with permit w/ expired tariff", async () => {
       const state = await loadFixture(deploy);
       const {router, vault, user, mpc, usdt} = state;
@@ -2105,6 +2155,25 @@ describe("router", () => {
       });
 
       await expect(tx).to.be.revertedWith("Router: Tariff expired");
+    });
+
+    it("should not create eth w/ bad tariff chain id", async () => {
+      const state = await loadFixture(deploy);
+      const {router, user, mpc, weth} = state;
+
+      const tariff = {
+        ...data.router.tariff(state),
+        baseToken: weth.address,
+        chainId: 1,
+      } as any;
+
+      const signature = await mpc.signMessage(getTariffHash(tariff));
+
+      const tx = router.connect(user).createETH(tariff, signature, {
+        value: parseEther("1"),
+      });
+
+      await expect(tx).to.be.revertedWith("MPCSignable: Must be MPC");
     });
 
     it("should not create eth w/ bad tariff user", async () => {
