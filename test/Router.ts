@@ -2839,6 +2839,47 @@ describe("router", () => {
       expect(claimedAfter).eq(false);
     });
 
+    it("should not claim w/ bad token", async () => {
+      const {router, vault, user, mpc, btcb, usdt} = await loadFixture(deploy);
+
+      // top up user to be sure here's enough funds to withdraw
+      await btcb.transfer(vault.address, toAmountUint256(10));
+
+      const txHash = "0xba5cd6f533e448e71786fdf5eeda4c3d47d6f616cb40b210cd9943f06677fe7e";
+
+      const hash = utils.keccak256(
+        ethers.utils.defaultAbiCoder.encode(
+          ["uint256", "address", "address", "uint256", "bytes32"],
+          [network.config.chainId, user.address, btcb.address, toAmountUint256(0.1), txHash],
+        ),
+      );
+
+      const signature = await mpc.signMessage(ethers.utils.arrayify(hash));
+
+      const userBalanceBefore = await btcb.balanceOf(user.address);
+      const vaultBalanceBefore = await btcb.balanceOf(vault.address);
+      const claimedBefore = await router.claimed(txHash);
+
+      const tx = router
+        .connect(user)
+        .claim(user.address, user.address, usdt.address, toAmountUint256(0.1), txHash, signature);
+
+      await expect(tx).to.be.revertedWith("MPCSignable: Must be MPC");
+
+      const userBalanceAfter = await btcb.balanceOf(user.address);
+      const vaultBalanceAfter = await btcb.balanceOf(vault.address);
+      const claimedAfter = await router.claimed(txHash);
+
+      expect(userBalanceBefore).eq(0);
+      expect(userBalanceAfter).eq(0);
+
+      expect(vaultBalanceBefore).eq(toAmountUint256(10));
+      expect(vaultBalanceAfter).eq(toAmountUint256(10));
+
+      expect(claimedBefore).eq(false);
+      expect(claimedAfter).eq(false);
+    });
+
     it("should not claim w/ bad amount", async () => {
       const {router, vault, user, mpc, btcb} = await loadFixture(deploy);
 
