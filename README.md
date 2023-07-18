@@ -2,6 +2,10 @@
 
 Supercharge Your DeFi Earnings. https://rehold.io
 
+## Audit
+
+Audited by [Certik](https://skynet.certik.com/projects/rehold).
+
 ## BNB Chain
 
 - Router: https://bscscan.com/address/0xa04295018eb7353a9755a2b227c9203fed3d9b7c
