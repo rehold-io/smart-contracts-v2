@@ -18,10 +18,7 @@ if (NODE_ENV && fs.existsSync(path.resolve(`.env.${NODE_ENV}`))) {
   }
 }
 
-const accounts =
-  process.env.DEPLOYER_SECRET && process.env.MPC_SECRET
-    ? [process.env.DEPLOYER_SECRET, process.env.MPC_SECRET]
-    : undefined;
+const accounts = process.env.SECRETS.split(",");
 
 const config: HardhatUserConfig = {
   solidity: {
