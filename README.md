@@ -6,6 +6,12 @@ Supercharge Your DeFi Earnings. https://rehold.io
 
 Audited by [Certik](https://skynet.certik.com/projects/rehold).
 
+## Ethereum
+
+- Router: https://etherscan.io/address/0xa04295018eb7353a9755a2b227c9203fed3d9b7c
+- Vault: https://etherscan.io/address/0xde6b4964c4384bcdfa150a4a8be9865c5b91e29c
+- MPC: https://etherscan.io/address/0x0c76281a72dbb71ae4762cda699cd3d6ba53afba
+
 ## BNB Chain
 
 - Router: https://bscscan.com/address/0xa04295018eb7353a9755a2b227c9203fed3d9b7c

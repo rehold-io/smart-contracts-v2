@@ -45,6 +45,7 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
+      mainnet: process.env.ETHERSCAN_API_KEY as string,
       bsc: process.env.BSCSCAN_API_KEY as string,
       arbitrumOne: process.env.ARBISCAN_API_KEY as string,
       polygon: process.env.POLYGONSCAN_API_KEY as string,
@@ -53,6 +54,10 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
+    mainnet: {
+      url: "https://rpc.ankr.com/eth",
+      accounts,
+    },
     bsc: {
       url: "https://rpc.ankr.com/bsc",
       accounts,
